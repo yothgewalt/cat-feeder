@@ -13,8 +13,8 @@
 #include <WiFiClient.h>
 #include <ESP8266WiFi.h>
 #include <ESP8266HTTPClient.h>
-#define WIFI_SSID "JOJA2.4G"
-#define WIFI_PASSWORD "08989087085"
+#define WIFI_SSID "B415"
+#define WIFI_PASSWORD "appletv415"
 WiFiClient wifi_client;
 WiFiClient wifi_client_mqtt;
 
@@ -127,7 +127,7 @@ void mqtt_callback(char *topic, byte *payload, unsigned int length) {
         servo.write(180);
         delay(64);
 
-        send_line_notify("Received 'open_lid' command, opening the lid....");
+        // send_line_notify("Received 'open_lid' command, opening the lid....");
     }
 }
 
@@ -163,7 +163,7 @@ void set_button_listener(time_t *current_time_t, uint8_t pin) {
         servo.write(180);
         delay(64);
 
-        send_line_notify("Button pressed, opening the lid....");
+        // send_line_notify("Button pressed, opening the lid....");
     }
 
     delay(64);
@@ -184,7 +184,7 @@ void set_schedule_listener(time_t *current_time_t, int *seconds_timer, String la
             servo.write(180);
             delay(64);
 
-            send_line_notify("Reached the feed time, opening the lid....");
+            // send_line_notify("Reached the feed time, opening the lid....");
         }
     }
 
@@ -369,7 +369,7 @@ void loop() {
                 redis_client.set("refill_line_notify_cooldown", "1");
                 redis_client.expire("refill_line_notify_cooldown", 600);
 
-                send_line_notify("Food tank is almost empty, please refill the food.");
+                // send_line_notify("Food tank is almost empty, please refill the food.");
             }
         }
     }
