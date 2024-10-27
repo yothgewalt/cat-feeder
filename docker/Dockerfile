@@ -1,0 +1,2 @@
+FROM rabbitmq:latest
+RUN rabbitmq-plugins enable --offline rabbitmq_prometheus rabbitmq_management rabbitmq_management_agent rabbitmq_web_dispatch rabbitmq_mqtt rabbitmq_amqp1_0

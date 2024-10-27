@@ -1,0 +1,100 @@
+services:
+    grafana:
+        image: grafana/grafana:latest
+        container_name: grafana
+        ports:
+            - "3000:3000"
+        environment:
+            - GF_SECURITY_ADMIN_USER=cat
+            - GF_SECURITY_ADMIN_PASSWORD=j9I5cNen1Aj7
+        user: "root" # for development
+        healthcheck:
+            test: ["CMD", "curl", "-f", "http://localhost:3000/api/health"]
+            interval: 30s
+            timeout: 10s
+            retries: 3
+        volumes:
+            - cat:/var/lib/grafana
+
+    rabbitmq:
+        image: rabbitmq:latest
+        container_name: rabbitmq
+        restart: always
+        build:
+            context: ./docker
+        ports:
+            - "1883:1883"
+            - "5552:5552"
+            - "5672:5672"
+            - "15672:15672"
+            - "15692:15692"
+        command: "/bin/bash -c \"rabbitmq-plugins enable --offline rabbitmq_stream rabbitmq_prometheus rabbitmq_management rabbitmq_management_agent rabbitmq_web_dispatch rabbitmq_mqtt rabbitmq_amqp1_0; rabbitmq-server\""
+        environment:
+            RABBITMQ_DEFAULT_USER: cat
+            RABBITMQ_DEFAULT_PASS: j9I5cNen1Aj7
+            RABBITMQ_ERLANG_COOKIE: 'cat_cookie'
+        volumes:
+            - cat:/var/lib/rabbitmq
+        healthcheck:
+            test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+            interval: 30s
+            timeout: 30s
+            retries: 5
+
+
+    influxdb:
+        image: influxdb:2
+        container_name: influxdb
+        restart: always
+        ports:
+            - "8086:8086"
+        environment:
+            DOCKER_INFLUXDB_INIT_MODE: setup
+            DOCKER_INFLUXDB_INIT_USERNAME_FILE: /run/secrets/influxdb_admin_username
+            DOCKER_INFLUXDB_INIT_PASSWORD_FILE: /run/secrets/influxdb_admin_password
+            DOCKER_INFLUXDB_INIT_ADMIN_TOKEN_FILE: /run/secrets/influxdb_admin_token
+            DOCKER_INFLUXDB_INIT_ORG: cat
+            DOCKER_INFLUXDB_INIT_BUCKET: box
+        secrets:
+            - influxdb_admin_username
+            - influxdb_admin_password
+            - influxdb_admin_token
+        volumes:
+            - type: volume
+              source: cat
+              target: /var/lib/influxdb2
+            - type: volume
+              source: cat_config
+              target: /etc/influxdb2
+        healthcheck:
+            test: ["CMD", "curl" , "-f", "http://localhost:8086/ping"]
+            interval: 5s
+            timeout: 10s
+            retries: 5
+
+
+    redis:
+        image: redis:latest
+        container_name: redis
+        restart: always
+        ports:
+            - "6379:6379"
+        command: "redis-server --save 20 1 --requirepass \"j9I5cNen1Aj7\""
+        healthcheck:
+            test: ["CMD", "redis-cli", "--raw", "incr", "ping"]
+            timeout: 30s
+            retries: 5
+
+
+secrets:
+    influxdb_admin_username:
+        file: ./.env.influxdb_admin_username
+    influxdb_admin_password:
+        file: ./.env.influxdb_admin_password
+    influxdb_admin_token:
+        file: ./.env.influxdb_admin_token
+
+
+volumes:
+    cat:
+    cat_config:
