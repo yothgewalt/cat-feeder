@@ -12,7 +12,6 @@ type MQTTMessage = {
 
 export default function Home() {
     const [mqttClient, setMqttClient] = useState<mqtt.MqttClient | null>(null);
-    const [messages, setMessages] = useState<MQTTMessage[]>([]);
     const [isConnected, setIsConnected] = useState(false);
 
     useEffect(() => {
@@ -37,7 +36,6 @@ export default function Home() {
 
         mqttClient.on('message', (topic, message) => {
             const msg = message.toString();
-            setMessages((prevMessages) => [...prevMessages, { topic, message: msg }]);
             console.log(`Message received on topic ${topic}: ${msg}`);
         });
 
@@ -73,7 +71,7 @@ export default function Home() {
                     height={38}
                     priority
                 />
-                <span className="font-[family-name:var(--font-geist-mono)]">
+                <span className="text-center font-[family-name:var(--font-geist-mono)]">
                     You can press the button below to release the cat food.
                 </span>
 
@@ -100,19 +98,6 @@ export default function Home() {
                         Soruce code
                     </a>
                 </div>
-
-                {messages.map((msg, idx) => {
-                    return (
-                        <span key={idx} className="flex flex-row space-x-3">
-                            <span className="font-[family-name:var(--font-geist-mono)]">
-                                [{msg.topic}]
-                            </span>
-                            <span className="font-[family-name:var(--font-geist-mono)]">
-                                {msg.message}
-                            </span>
-                        </span>
-                    );
-                })}
             </main>
             <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
                 <a

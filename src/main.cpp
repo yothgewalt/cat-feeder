@@ -13,13 +13,13 @@
 #include <WiFiClient.h>
 #include <ESP8266WiFi.h>
 #include <ESP8266HTTPClient.h>
-#define WIFI_SSID "<your_ssid>"
-#define WIFI_PASSWORD "<your_password>"
+#define WIFI_SSID "JOJA2.4G"
+#define WIFI_PASSWORD "08989087085"
 WiFiClient wifi_client;
 WiFiClient wifi_client_mqtt;
 
 #include <PubSubClient.h>
-#define MQTT_SERVER "<your_ip_address>"
+#define MQTT_SERVER "185.84.160.95"
 #define MQTT_PORT 1883
 #define MQTT_USER "cat"
 #define MQTT_PASSWORD "j9I5cNen1Aj7"
@@ -27,14 +27,14 @@ WiFiClient wifi_client_mqtt;
 PubSubClient mqtt_client(wifi_client_mqtt);
 
 #include <InfluxDbClient.h>
-#define INFLUXDB_URL "http://<your_ip_address>:8086"
+#define INFLUXDB_URL "http://185.84.160.95:8086"
 #define INFLUXDB_TOKEN "539MPPO9k9JtsL/f6h23cGMWaeZ7WtAeidPbUyR3mOU="
 #define INFLUXDB_ORG "cat"
 #define INFLUXDB_BUCKET "box"
 InfluxDBClient influxdb_client(INFLUXDB_URL, INFLUXDB_ORG, INFLUXDB_BUCKET, INFLUXDB_TOKEN);
 
 #include <Redis.h>
-#define REDIS_ADDR "<your_ip_address>"
+#define REDIS_ADDR "185.84.160.95"
 #define REDIS_PORT 6379
 #define REDIS_PASSWORD "j9I5cNen1Aj7"
 Redis redis_client(wifi_client);
