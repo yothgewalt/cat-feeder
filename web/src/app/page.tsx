@@ -5,10 +5,7 @@ import Image from "next/image";
 
 import mqtt from "mqtt";
 
-type MQTTMessage = {
-    topic: string;
-    message: string;
-};
+import axios from "axios";
 
 export default function Home() {
     const [mqttClient, setMqttClient] = useState<mqtt.MqttClient | null>(null);
@@ -60,9 +57,22 @@ export default function Home() {
         }
     }
 
+    const [schedule, setSchedule] = useState<number>(1);
+
+    const handleFormSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+        event.preventDefault();
+
+        try {
+            const response = await axios.post("http://localhost:3000/api", { schedule: schedule });
+            alert(response);
+        } catch (e) {
+            alert('error');
+        }
+    }
+
     return (
         <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-            <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
+            <main className="flex flex-col gap-5 row-start-2 items-center sm:items-start">
                 <Image
                     className="dark:invert"
                     src="/next.svg"
@@ -97,6 +107,25 @@ export default function Home() {
                     >
                         Soruce code
                     </a>
+                </div>
+                <div>
+                    <form onSubmit={handleFormSubmit}>
+                        <label htmlFor="schedule">Select feeding interval:</label>
+                        <select
+                            id="schedule"
+                            value={schedule}
+                            className="text-black"
+                            onChange={(e) => setSchedule(Number(e.target.value))}
+                        >
+                            <option value={1}>1 hour</option>
+                            <option value={2}>2 hours</option>
+                            <option value={3}>3 hours</option>
+                            <option value={4}>4 hours</option>
+                            <option value={5}>5 hours</option>
+                            <option value={6}>6 hours</option>
+                        </select>
+                        <button type="submit">Set Schedule</button>
+                    </form>
                 </div>
             </main>
             <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">

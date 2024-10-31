@@ -3,7 +3,7 @@
 #include <SPI.h>
 #include <Wire.h>
 #include <Arduino.h>
-#define DEVICE "ESP8266 (NodeMCU-12E)"
+#define DEVICE "ESP8266 (NodeMCU-12E) - Parakeet"
 #define SERIAL_BAUD 112500
 #define TZ_INFO "ICT-7"
 
@@ -13,8 +13,8 @@
 #include <WiFiClient.h>
 #include <ESP8266WiFi.h>
 #include <ESP8266HTTPClient.h>
-#define WIFI_SSID "B415"
-#define WIFI_PASSWORD "appletv415"
+#define WIFI_SSID "Bearbear"
+#define WIFI_PASSWORD "earn180347"
 WiFiClient wifi_client;
 WiFiClient wifi_client_mqtt;
 
@@ -133,13 +133,9 @@ void mqtt_callback(char *topic, byte *payload, unsigned int length) {
 
 // Function to send a message to Line Notify
 void send_line_notify(String message) {
-    ESP.wdtDisable();
-
     line_notify_client.message = message;
     LineNotify.send(line_notify_client);
     yield();
-
-    ESP.wdtEnable(WDTO_8S);
 }
 
 
@@ -174,7 +170,7 @@ void set_button_listener(time_t *current_time_t, uint8_t pin) {
 void set_schedule_listener(time_t *current_time_t, int *seconds_timer, String latest_button_pressed_timestamp) {
     if (latest_button_pressed_timestamp.length() > 0) {
         time_t latest_button_pressed_time_t = atol(latest_button_pressed_timestamp.c_str());
-        if (difftime(*current_time_t, latest_button_pressed_time_t) > *seconds_timer) {
+        if (difftime(*current_time_t, latest_button_pressed_time_t) > 200) {
             Serial.println("[Cat] Reached the feed time, opening the lid...");
             set_latest_timestamp(current_time_t);
 
@@ -260,8 +256,6 @@ float get_tank_height(int trigger_pin, int echo_pin) {
 
 // setup function
 void setup() {
-    ESP.wdtDisable();
-
     Serial.begin(SERIAL_BAUD);
 
     WiFi.mode(WIFI_AP_STA);
