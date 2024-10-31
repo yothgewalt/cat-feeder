@@ -3,7 +3,7 @@
 #include <SPI.h>
 #include <Wire.h>
 #include <Arduino.h>
-#define DEVICE "ESP8266 (NodeMCU-12E) - Parakeet"
+#define DEVICE "ESP8266 (NodeMCU-12E)"
 #define SERIAL_BAUD 112500
 #define TZ_INFO "ICT-7"
 
@@ -133,9 +133,13 @@ void mqtt_callback(char *topic, byte *payload, unsigned int length) {
 
 // Function to send a message to Line Notify
 void send_line_notify(String message) {
+    ESP.wdtDisable();
+
     line_notify_client.message = message;
     LineNotify.send(line_notify_client);
     yield();
+
+    ESP.wdtEnable(WDTO_8S);
 }
 
 
@@ -256,6 +260,8 @@ float get_tank_height(int trigger_pin, int echo_pin) {
 
 // setup function
 void setup() {
+    ESP.wdtDisable();
+
     Serial.begin(SERIAL_BAUD);
 
     WiFi.mode(WIFI_AP_STA);
